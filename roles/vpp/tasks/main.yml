@@ -1,18 +1,19 @@
 ---
-# tasks file for vpp
-# - name: Installing VPP repo on nodes
-#   shell: "curl -s https://packagecloud.io/install/repositories/fdio/release/script.rpm.sh | sudo bash"
+#tasks file for vpp
+- name: Installing VPP repo on nodes
+  shell: "curl -s https://packagecloud.io/install/repositories/fdio/release/script.rpm.sh | sudo bash"
 
-# - name: Installing VPP core and plugins
-#   yum:
-#     name: [vpp, vpp-plugins, vpp-devel, vpp-api-python, vpp-api-lua, vpp-api-java]
-#     state: present
+- name: Installing VPP core and plugins
+  yum:
+    name: [vpp, vpp-plugins, vpp-devel, vpp-api-python, vpp-api-lua, vpp-api-java]
+    state: present
 
 - name: Taking eth1 down and out of kernel control
   shell: "ip link set eth1 down"
 
-# - name: Backing up default vpp configuration
-#   command: "mv /etc/vpp/startup.conf ../backup.startup.conf"
+- name: Backing up default vpp configuration
+  command: "mv /etc/vpp/startup.conf ../backup.startup.conf"
+
 - name: Loading the DPDK kernel module uio
   modprobe:
     name: uio_pci_generic
@@ -59,6 +60,12 @@
           nitems 5000
         }
 
+- name: Stop VPP service
+  systemd:
+    name: vpp
+    state: stopped
+    enabled: yes
+
 # - name: Restarting VPP service
 #   systemd:
 #     name: vpp
@@ -73,8 +80,7 @@
 
 - name: Pulling container images
   shell: /tmp/pull-images.sh
-  tags:
-    - contiv
+
 
 # TODO - missing kubeconfig stuff
 

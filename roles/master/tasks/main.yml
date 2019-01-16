@@ -13,7 +13,7 @@
     state: restarted
 
 - name: Running Kubeadm Init on Master
-  shell: "kubeadm init --pod-network-cidr=10.1.0.0/16" #--token-ttl 0 --pod-network-cidr=10.1.0.0/16"
+  shell: "kubeadm init --token-ttl 0 --pod-network-cidr=10.1.0.0/16" # --pod-network-cidr=10.1.0.0/16"
   register: kubeadm_output
 
 - name: Recording kubeadm_output to file
