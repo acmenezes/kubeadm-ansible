@@ -1,0 +1,8 @@
+- hosts: worker_nodes
+  gather_facts: false
+  become: true
+
+  roles:
+  - common
+  - node
+  # - vpp

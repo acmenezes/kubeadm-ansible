@@ -1,0 +1,9 @@
+- hosts: master_nodes
+  gather_facts: false
+  become: true
+
+  roles:
+  - common
+  - master
+  # - vpp
+  # - weave

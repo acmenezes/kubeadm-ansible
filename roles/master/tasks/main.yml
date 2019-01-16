@@ -1,0 +1,45 @@
+---
+# tasks file for master
+- name: Update kubeadm configuration - disable the use of memory Huge Pages
+  blockinfile: 
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    block: |
+        Environment="KUBELET_EXTRA_ARGS=--feature-gates HugePages=false"
+
+- name: Restarting Kubelet
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+
+- name: Running Kubeadm Init on Master
+  shell: "kubeadm init --pod-network-cidr=10.1.0.0/16" #--token-ttl 0 --pod-network-cidr=10.1.0.0/16"
+  register: kubeadm_output
+
+- name: Recording kubeadm_output to file
+  copy:
+    content: "{{kubeadm_output.stdout}}"
+    dest: /home/vagrant/kubeadm_output
+
+- name: Fetch kubeadm output
+  fetch:
+    src: /home/vagrant/kubeadm_output
+    dest: ./kubeadm_output
+    flat: yes
+
+- name: Create kube dir on vagrant home
+  file: path="/home/vagrant/.kube" state=directory
+
+- name: Setting Up Kubectl
+  copy:
+    src: /etc/kubernetes/admin.conf
+    remote_src: yes
+    dest: /home/vagrant/.kube/config
+    owner: vagrant
+    group: vagrant
+
+- name: Fetch kubectl config on hypervisor machine
+  fetch:
+    src: /etc/kubernetes/admin.conf
+    dest: admin.conf
+    flat: yes
