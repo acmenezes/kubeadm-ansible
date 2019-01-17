@@ -1,23 +1,26 @@
 ---
 #tasks file for vpp
-- name: Installing VPP repo on nodes
-  shell: "curl -s https://packagecloud.io/install/repositories/fdio/release/script.rpm.sh | sudo bash"
+# - name: Installing VPP repo on nodes
+#   shell: "curl -s https://packagecloud.io/install/repositories/fdio/release/script.rpm.sh | sudo bash"
 
-- name: Installing VPP core and plugins
-  yum:
-    name: [vpp, vpp-plugins, vpp-devel, vpp-api-python, vpp-api-lua, vpp-api-java]
-    state: present
+# - name: Installing VPP core and plugins
+#   yum:
+#     name: [vpp, vpp-plugins, vpp-devel, vpp-api-python, vpp-api-lua, vpp-api-java]
+#     state: present
 
 - name: Taking eth1 down and out of kernel control
   shell: "ip link set eth1 down"
 
-- name: Backing up default vpp configuration
-  command: "mv /etc/vpp/startup.conf ../backup.startup.conf"
+# - name: Backing up default vpp configuration
+#   command: "mv /etc/vpp/startup.conf ../backup.startup.conf"
 
 - name: Loading the DPDK kernel module uio
   modprobe:
     name: uio_pci_generic
     state: present
+
+# - name: Making the module uio_pci_generic persistent
+# TODO
 
 - name: Creating the VPP directory
   file:
@@ -60,11 +63,11 @@
           nitems 5000
         }
 
-- name: Stop VPP service
-  systemd:
-    name: vpp
-    state: stopped
-    enabled: yes
+# - name: Stop VPP service
+#   systemd:
+#     name: vpp
+#     state: stopped
+#     enabled: yes
 
 # - name: Restarting VPP service
 #   systemd:
@@ -72,19 +75,17 @@
 #     state: restarted
 #     enabled: yes
 
-- name: Download script to pull container images
-  get_url:
-    url: https://raw.githubusercontent.com/contiv/vpp/master/k8s/pull-images.sh
-    dest: /tmp
-    mode: 0755
+# - name: Download script to pull container images
+#   get_url:
+#     url: https://raw.githubusercontent.com/contiv/vpp/master/k8s/pull-images.sh
+#     dest: /tmp
+#     mode: 0755
 
-- name: Pulling container images
-  shell: /tmp/pull-images.sh
+# - name: Pulling container images
+#   shell: /tmp/pull-images.sh
 
-
-# TODO - missing kubeconfig stuff
-
-# - name: Deploying Contiv-vpp
-#   shell: kubectl apply -f https://raw.githubusercontent.com/contiv/vpp/master/k8s/contiv-vpp.yaml
-#   tags:
-#     - contiv
+- name: Deploying Contiv-vpp
+  shell: kubectl apply -f /vagrant/contiv-vpp.yaml #https://raw.githubusercontent.com/contiv/vpp/master/k8s/contiv-vpp.yaml
+  become_user: vagrant
+  tags:
+    - contiv

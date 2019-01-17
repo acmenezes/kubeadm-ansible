@@ -39,8 +39,10 @@
       shell: |
         setenforce 0
         sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+# TODO: allow variable to choose version for kube binaries below
     - name: Install Kubelet Kubeadm and Kubectl
-      shell: yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+      shell: 'yum install -y kubelet{{KUBE_VERSION}} kubeadm{{KUBE_VERSION}} kubectl{{KUBE_VERSION}} --disableexcludes=kubernetes'
     - name: Enable and Start Kubelet
       systemd:
         name: kubelet

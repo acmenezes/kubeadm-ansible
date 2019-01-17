@@ -12,4 +12,4 @@ Container solutions archictects willing to better understand the ins and outs of
 ### Prerequisites
 This project can be deployed int two flavors: Terraform or Vagrant. If you're using vagrant you need virtualbox or kvm/libvirt (plus the vagrant itself and the vagrant-libvirt plugin if you have libvirt) working in your mahchine. If you're using terraform read the particular cloud provider instructions once they are ready in the docs folder.
 
-Other than that you'll need up to date python and ansible installed on the testing machine.
+Other than that you'll need an up to date python and ansible installation on the testing machine.

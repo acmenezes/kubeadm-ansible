@@ -1,9 +1,11 @@
 - hosts: master_nodes
   gather_facts: false
   become: true
+  vars:
+    - KUBE_VERSION: "-1.11.2"
 
   roles:
-  - common
-  - master
-  # - vpp
+  # - common
+  # - master
+  - contiv-vpp
   # - weave
