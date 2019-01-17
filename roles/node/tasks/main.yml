@@ -4,8 +4,10 @@
   copy:
     src: ./kubeadm_output
     dest: /home/vagrant/
+
 - name: Getting kubeadm join command and token
   shell: cat /home/vagrant/kubeadm_output | grep 'kubeadm join'
   register: join_cluster
+
 - name: Joinning node to cluster
   shell: "{{join_cluster.stdout}}"

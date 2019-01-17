@@ -1,0 +1,34 @@
+---
+# This multus is hardcoded with flannel as the main CNI
+# It works according to the quickstart guide
+# https://github.com/intel/multus-cni/blob/master/doc/quickstart.md
+# Use a custom multus ansible role to install multus with other cni plugins
+
+# tasks for multus-daemonset option 
+
+- name: Cloning multus-cni repo
+  git:
+    repo: 'https://github.com/intel/multus-cni.git'
+    dest: multus
+    clone: yes
+  tags:
+    - multus-daemonset
+
+- name: Deploying multus and flannel daemonsets
+  k8s:
+    state: present
+    src: multus/images/multus-daemonset.yml
+  become_user: vagrant
+
+  tags:
+    - multus-daemonset
+
+- name: Deploying flannel daemonset
+  k8s:
+    state: present
+    src: multus/images/flannel-daemonset.yml
+  become_user: vagrant
+
+  tags:
+    - multus-daemonset
+

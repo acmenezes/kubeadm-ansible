@@ -18,7 +18,7 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 			master.vm.network "private_network", ip: "172.30.128.100"
 			master.vm.provision "ansible" do |ansible|
 				ansible.playbook = "deploy_master.yml"
-				#ansible.tags = "contiv"
+				#ansible.tags = "multus-daemonset"
 				ansible.groups = {
 					"master_nodes" => ["master"]
 				}
@@ -33,7 +33,7 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 				node.vm.network "private_network", ip: "172.30.128.10#{node_number}"
 				node.vm.provision "ansible" do |ansible|
 					ansible.playbook = "deploy_node.yml"
-					#ansible.tags = "nihil"
+					#ansible.tags = "multus-daemonset"
 					ansible.groups = {
 						"master_nodes" => ["master"],
 						"worker_nodes" => ["node1","node2","node3"]
