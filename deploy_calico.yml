@@ -4,7 +4,9 @@
   vars:
     - KUBE_VERSION: ""
 
+## TODO :  pass --pod-network-cidr=192.168.0.0/16 to kubeadm as variable
+
   roles:
     - common
     - master
-
+    - calico

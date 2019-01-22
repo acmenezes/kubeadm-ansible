@@ -1,2 +1,31 @@
 ---
 # tasks file for calico
+
+- name: Create Calico DIR
+  file:
+    dest: calico
+    state: directory
+
+- name: Download RBAC rules
+  get_url:
+    url: https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+    dest: calico/rbac-kdd.yaml
+    mode: 0444
+
+- name: Download RBAC rules
+  get_url:
+    url: https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+    dest: calico/calico.yaml
+    mode: 0444
+
+- name: Configure Role Base Access Control for calico
+  k8s:
+    state: present
+    src: calico/rbac-kdd.yaml
+  become_user: vagrant
+
+- name: Deploy Calico Daemonset
+  k8s:
+    state: present
+    src: calico/calico.yaml
+  become_user: vagrant
