@@ -18,7 +18,7 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 			master.vm.network "private_network", ip: "172.30.128.100"
 			master.vm.provision "ansible" do |ansible|
 				# ansible.playbook = "deploy_multus.yml"
-				ansible.playbook = "deploy_calico.yml"				
+				ansible.playbook = "deploy_master.yml"				
 				#ansible.tags = "multus-daemonset"
 				ansible.groups = {
 					"master_nodes" => ["master"]
@@ -26,7 +26,7 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 			end
 	end
 
-	N = 3
+	N = 2
 	(1..N).each do |node_number|
 		config.vm.define "node#{node_number}" do |node|
 				node.vm.hostname = "node#{node_number}"
