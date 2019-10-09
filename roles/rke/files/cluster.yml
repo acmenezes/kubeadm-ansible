@@ -1,0 +1,25 @@
+# BEGIN ANSIBLE MANAGED BLOCK
+nodes:
+    - address: "192.168.121.177"
+      port: "22"
+      role:
+        - controlplane
+        - etcd
+      user: vagrant
+      ssh_key_path: /home/alex/projects/kubeadm-ansible/.vagrant/machines/master/libvirt/private_key
+    - address: "192.168.121.34"
+      port: "22"
+      role:
+        - worker
+      user: vagrant
+      ssh_key_path: /home/alex/projects/kubeadm-ansible/.vagrant/machines/node1/libvirt/private_key
+      # There are several network plug-ins that work, but we default to canal      
+network:
+    plugin: none
+# Currently only nginx ingress provider is supported.
+# To disable ingress controller, set `provider: none`
+ingress:
+    provider: none
+dns:
+    provider: coredns
+# END ANSIBLE MANAGED BLOCK

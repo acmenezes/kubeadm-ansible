@@ -10,4 +10,4 @@
   register: join_cluster
 
 - name: Joinning node to cluster
-  shell: "{{join_cluster.stdout}}"
+  shell: "{{join_cluster.stdout}}" #--ignore-preflight-errors 'all'

@@ -1,9 +1,71 @@
 ---
 # tasks file for common
-    - name: Installing Container Run Time
+    # - name: Importing GPGKEY for enterprise linux repo
+    #   shell: 'rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org'
+    #   tags:
+    #     - kernel
+
+    # - name: Installing the EL repo
+    #   shell: 'rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm'
+    #   tags:
+    #     - kernel
+
+    # - name: Upgrading the kernel
+    #   yum:
+    #     name: kernel-ml
+    #     enablerepo: elrepo-kernel
+    #     state: present
+    #   tags:
+    #     - kernel
+
+    # - name: Rebooting and waiting for host to come back
+    #   shell: sleep 2 && shutdown -r +1
+    #   async: 1
+    #   poll: 0
+    #   sudo: true
+    #   ignore_errors: true
+    #   tags:
+    #     - kernel
+    
+    # - name: waiting for server to come back
+    #   local_action: wait_for host={{ansible_host}} state=started delay=15 timeout=300
+    #   sudo: false
+    #   tags:
+    #     - kernel
+
+    # - name: Fixing GRUB order to boot to the right kernel
+    #   lineinfile:
+    #     path: /etc/default/grub
+    #     regexp: '^GRUB_DEFAULT'
+    #     line: 'GRUB_DEFAULT=0'
+    #   tags:
+    #     - kernel
+
+    # - name: Generating GRUB boot config
+    #   shell: 'grub2-mkconfig -o /boot/grub2/grub.cfg'
+    #   tags:
+    #     - kernel
+
+    # - name: Rebooting and waiting for host to come back
+    #   shell: sleep 2 && shutdown -r +1
+    #   async: 1
+    #   poll: 0
+    #   sudo: true
+    #   ignore_errors: true
+    #   tags:
+    #     - kernel
+    
+    # - name: waiting for server to come back
+    #   local_action: wait_for host={{ansible_host}} state=started delay=15 timeout=300
+    #   sudo: false
+    #   tags:
+    #     - kernel 
+
+    - name: Installing Basic Tools
       yum:
         name: "{{item}}"
-        state: present
+        state: latest
+        update_cache: yes
       with_items:
         - yum-utils
         - device-mapper-persistent-data
@@ -49,8 +111,13 @@
         state: started
         enabled: yes
 
+    - name: Insert user vagrant in docker group
+      become: true
+      shell: "usermod -aG docker vagrant"
+
     - name: Disable Swap
       shell: "swapoff -a"
+
     - name: Add Kubernetes Repo
       copy:
         dest: "/etc/yum.repos.d/kubernetes.repo"
@@ -62,16 +129,27 @@
           gpgcheck=1
           repo_gpgcheck=1
           gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-          exclude=kube*
 
     - name: Disable SELinux
       shell: |
         setenforce 0
         sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
-# TODO: allow variable to choose version for kube binaries below
-    - name: Install Kubelet Kubeadm and Kubectl
-      shell: 'yum install -y kubelet{{KUBE_VERSION}} kubeadm{{KUBE_VERSION}} kubectl{{KUBE_VERSION}} --disableexcludes=kubernetes'
+    - name: Install Kubelet
+      yum:
+        name: kubelet-1.13.3
+        state: present    
+
+    - name: Install Kubeadm
+      yum:
+        name: kubeadm-1.13.3
+        state: present
+     
+    - name: Install Kubectl-1.13.3
+      yum:
+        name: kubelet-1.13.3
+        state: present
+
     - name: Enable and Start Kubelet
       systemd:
         name: kubelet

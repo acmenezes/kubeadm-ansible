@@ -3,7 +3,7 @@
   become: true
 
   vars:
-    - KUBE_VERSION: "-1.12.1"
+    - KUBE_VERSION: ""
 
   roles:
   - common

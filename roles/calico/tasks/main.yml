@@ -6,13 +6,13 @@
     dest: calico
     state: directory
 
-- name: Download RBAC rules
+- name: Download RBAC rules yaml Manifest
   get_url:
     url: https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
     dest: calico/rbac-kdd.yaml
     mode: 0444
 
-- name: Download RBAC rules
+- name: Download Calico Yaml Manifest
   get_url:
     url: https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
     dest: calico/calico.yaml
