@@ -1,13 +1,13 @@
 Vagrant.configure("2") do |config|
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
-	config.vm.provider "libvirt" do |libvirt|
-		libvirt.memory = 4096
-		libvirt.cpus = 2
-    #libvirt.nic_model_type = "virtio"
-    #libvirt.driver = "kvm"
-    #libvirt.nested = true		
-	end
+	# config.vm.provider "libvirt" do |libvirt|
+	# 	libvirt.memory = 4096
+	# 	libvirt.cpus = 2
+    # #libvirt.nic_model_type = "virtio"
+    # #libvirt.driver = "kvm"
+    # #libvirt.nested = true		
+	# end
 	
 	config.vm.provider "virtualbox" do |virtualbox|
 		virtualbox.memory = 4096
@@ -18,10 +18,13 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 			master.vm.hostname = "master"
 			master.vm.box = "centos/7"
 			#master.vm.network "private_network", type: "dhcp"
-			master.vm.network "private_network", ip: "192.168.255.100"
+			master.vm.network "private_network", ip: "172.0.1.100"
 			master.vm.provision "ansible" do |ansible|
 				# ansible.playbook = "deploy_multus.yml"
 				ansible.playbook = "deploy_master.yml"				
+				ansible.extra_vars = {
+					node_ip: "172.0.1.100"
+				}
 				# ansible.tags = "test_rke"
 				ansible.groups = {
 					"master_nodes" => ["master"]
@@ -34,9 +37,12 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 		config.vm.define "node#{node_number}" do |node|
 				node.vm.hostname = "node#{node_number}"
 				node.vm.box = "centos/7"
-				node.vm.network "private_network", ip: "192.168.255.10#{node_number}"
+				node.vm.network "private_network", ip: "172.0.1.10#{node_number}"
 				node.vm.provision "ansible" do |ansible|
 					ansible.playbook = "deploy_node.yml"
+					ansible.extra_vars = {
+						node_ip: "172.0.1.10#{node_number}"
+					}
 					# ansible.tags = "test_rke"
 					ansible.groups = {
 						"master_nodes" => ["master"],

@@ -137,18 +137,22 @@
 
     - name: Install Kubelet
       yum:
-        name: kubelet-1.13.3
+        name: kubelet
         state: present    
 
     - name: Install Kubeadm
       yum:
-        name: kubeadm-1.13.3
+        name: kubeadm
         state: present
      
-    - name: Install Kubectl-1.13.3
+    - name: Install Kubectl
       yum:
-        name: kubelet-1.13.3
+        name: kubelet
         state: present
+    - name: Configure node ip
+      lineinfile:
+        path: //etc/sysconfig/kubelet
+        line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
 
     - name: Enable and Start Kubelet
       systemd:

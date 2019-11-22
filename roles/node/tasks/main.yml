@@ -6,7 +6,7 @@
     dest: /home/vagrant/
 
 - name: Getting kubeadm join command and token
-  shell: cat /home/vagrant/kubeadm_output | grep 'kubeadm join'
+  shell: cat /home/vagrant/kubeadm_output | grep -A 2 'kubeadm join'
   register: join_cluster
 
 - name: Joinning node to cluster
