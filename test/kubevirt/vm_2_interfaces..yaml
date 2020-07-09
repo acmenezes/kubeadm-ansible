@@ -1,0 +1,58 @@
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  name: vmi-multus-multiple-net
+  metadata:
+  creationTimestamp: null
+  labels:
+    special: vmi-multus-multiple-net
+  
+spec:
+  terminationGracePeriodSeconds: 30
+  domain:
+    resources:
+      requests:
+        memory: 1024M
+    devices:
+      disks:
+      - name: containerdisk
+        disk:
+          bus: virtio
+      - name: emptydisk
+        disk:
+          bus: virtio
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+      interfaces:
+        - name: default
+          bridge: {}
+        - name: secondary-net
+          bridge: {}
+          
+  networks:
+  - name: default
+    pod: {}
+  - name: secondary-net 
+    multus:
+      # default: true
+      networkName: macvlan-conf
+
+  volumes:
+  - name: containerdisk
+    containerDisk:
+      image: kubevirt/fedora-cloud-container-disk-demo:latest
+  - name: emptydisk
+    emptyDisk:
+      capacity: "2Gi"
+  - name: cloudinitdisk
+    # cloudInitNoCloud:
+    #   userData: |-
+    #     #cloud-config
+    #     password: fedora
+    #     chpasswd: { expire: False }    
+    cloudInitNoCloud:
+      userData: |
+        #!/bin/bash
+        echo "fedora" | passwd fedora --stdin
+        dhclient eth0 eth1

@@ -1,15 +1,18 @@
-# Kubernetes Advanced Networking/Storage Provisioning with Kubeadm
+# Kubernetes Advanced Lab Configurations via Ansible and Kubeadm
 ---
-This project aims to deploy special networking and/or storage projects to be used with kubernetes such as VPP, DPDK, SR-iOV, kernel and OS custom performance tunning as well as allow the most comprehensive list of CNI based network plugins to be installed with kubernetes. Each network plugin or system feature will be deployed as an ansible role allowing users to create flexible playbooks to install the way they want only setting main variables and the roles needed to have a working solution.
+The main goal for this project is to have a handy tool to quickly spin up a local kubernetes environment with custom configurations that are not possible with minikube. When at least more than two nodes are needed or to test high availability features when we have multiple nodes.
 
-Another goal is to have a single platform to launch kubernetes customized environments in order to compare network and storage solutions as well as prepare demos, workshops and  meetup presentations.
+So different CNI plugins, storage plugins or special projects such as multus, kubevirt and others can be installed according to the variables input on the main playbook.
 
-As networking, storage can be also customized and should be added in ansible's role set as well to allow customized persistent storage with performance comparison opening the doors for future storage considerations in data science projects working with containerized big data tools such as spark, hadoop, kafka and similar workloads.
+This way we have a single tool to launch customized kubernetes environments in order to compare network and storage solutions as well as prepare demos, workshops and meetup presentations.
+
+This is accomplished using vagrant and libvirt for virtualization as well as ansible to install everything needed on the nodes. In order to use this project it's necessary to have a linux box running libvirt/kvm. 
 
 ### Target audience 
+
 Container solutions archictects willing to better understand the ins and outs of custom, optimized networking and storage to meet their client's needs.
 
 ### Prerequisites
-This project can be deployed int two flavors: Terraform or Vagrant. If you're using vagrant you need virtualbox or kvm/libvirt (plus the vagrant itself and the vagrant-libvirt plugin if you have libvirt) working in your mahchine. If you're using terraform read the particular cloud provider instructions once they are ready in the docs folder.
 
+This project needs vagrant with kvm/libvirt working in a Linux box. If 
 Other than that you'll need an up to date python and ansible installation on the testing machine.
