@@ -1,4 +1,4 @@
 admin.conf
 kubeadm_output
 .vagrant
-.retry
+*.retry
