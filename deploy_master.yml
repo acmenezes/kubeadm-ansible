@@ -5,6 +5,7 @@
     - KUBE_VERSION: ""
 
   roles:
+    - kernel-upgrade
     - common
     - master
     - weave

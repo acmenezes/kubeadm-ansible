@@ -6,5 +6,6 @@
     - KUBE_VERSION: ""
 
   roles:
-  - common
-  - node
+    - kernel-upgrade
+    - common
+    - node
