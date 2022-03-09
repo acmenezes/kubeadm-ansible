@@ -1,0 +1,23 @@
+---
+# tasks file for cillium
+
+- name: Creating Cilium Workdir
+  file:
+    dest: cilium
+    state: directory
+
+
+- name: Downloading Cilium Manifests
+  get_url:
+    url: https://github.com/cilium/cilium/archive/v1.2.0.zip
+    dest: cilium/v1.2.0.zip
+    mode: 0444
+
+- name: Unarchive cilium manifests
+  unarchive:
+    src: cilium/v1.2.0.zip
+    dest: cilium
+  remote_src: yes
+
+- name: Generating Certificates
+  

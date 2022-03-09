@@ -1,0 +1,91 @@
+---
+#tasks file for vpp
+# - name: Installing VPP repo on nodes
+#   shell: "curl -s https://packagecloud.io/install/repositories/fdio/release/script.rpm.sh | sudo bash"
+
+# - name: Installing VPP core and plugins
+#   yum:
+#     name: [vpp, vpp-plugins, vpp-devel, vpp-api-python, vpp-api-lua, vpp-api-java]
+#     state: present
+
+- name: Taking eth1 down and out of kernel control
+  shell: "ip link set eth1 down"
+
+# - name: Backing up default vpp configuration
+#   command: "mv /etc/vpp/startup.conf ../backup.startup.conf"
+
+- name: Loading the DPDK kernel module uio
+  modprobe:
+    name: uio_pci_generic
+    state: present
+
+# - name: Making the module uio_pci_generic persistent
+# TODO
+
+- name: Creating the VPP directory
+  file:
+    path: "/etc/vpp/"
+    state: directory
+
+- name: Creating blank config file
+  file:
+    path: "/etc/vpp/contiv-vswitch.conf"
+    state: touch
+
+# The configuration below is recommended by the project contiv-vpp to run with a kubernetes cluster
+- name: Configuring eth1 to be used by DPDK
+  blockinfile:
+    dest: "/etc/vpp/contiv-vswitch.conf"
+    block: |
+        unix {
+            nodaemon
+            cli-listen /run/vpp/cli.sock
+            cli-no-pager
+            coredump-size unlimited
+            full-coredump
+            poll-sleep-usec 100
+        }
+        nat {
+            endpoint-dependent
+            translation hash buckets 1048576
+            translation hash memory 268435456
+            user hash buckets 1024
+            max translations per user 10000
+        }
+        acl-plugin {
+          use tuple merge 0
+        }
+        dpdk {
+            dev 0000:00:06.0
+        }
+        api-trace {
+          on
+          nitems 5000
+        }
+
+# - name: Stop VPP service
+#   systemd:
+#     name: vpp
+#     state: stopped
+#     enabled: yes
+
+# - name: Restarting VPP service
+#   systemd:
+#     name: vpp
+#     state: restarted
+#     enabled: yes
+
+# - name: Download script to pull container images
+#   get_url:
+#     url: https://raw.githubusercontent.com/contiv/vpp/master/k8s/pull-images.sh
+#     dest: /tmp
+#     mode: 0755
+
+# - name: Pulling container images
+#   shell: /tmp/pull-images.sh
+
+- name: Deploying Contiv-vpp
+  shell: kubectl apply -f /vagrant/contiv-vpp.yaml #https://raw.githubusercontent.com/contiv/vpp/master/k8s/contiv-vpp.yaml
+  become_user: vagrant
+  tags:
+    - contiv

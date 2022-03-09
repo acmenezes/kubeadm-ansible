@@ -17,15 +17,13 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 	config.vm.define "master" do |master|
 			master.vm.hostname = "master"
 			master.vm.box = "generic/fedora33"
+			# master.vm.network "private_network", type: "dhcp"
+			# master.vm.network "private_network", ip: "172.0.1.100"
 			config.vm.network "public_network", :dev => "virbr0", :mode => 'bridge', :type => "bridge"
-			# config.vm.network "public_network", type: "bridge"
-			# config.vm.network "public_network", bridge: "wlp3s0",
-			# 	use_dhcp_assigned_default_route: true
+			# config.vm.network "public_network", type: "bridge",
 			# 	dev: "virbr0",
 			# 	mode: "bridge",
 			# 	network_name: "public-network"				
-			# master.vm.network "private_network", type: dhcp
-			# master.vm.network "private_network", ip: "172.0.1.100"
 			master.vm.provision "ansible" do |ansible|
 				# ansible.playbook = "deploy_multus.yml"
 				ansible.playbook = "deploy_master.yml"				
@@ -36,7 +34,7 @@ ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 				ansible.groups = {
 					"master_nodes" => ["master"]
 				}
-			end	
+			end
 	end
 
 	# N = 2

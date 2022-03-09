@@ -2,7 +2,7 @@
 # tasks file for common
     - name: Installing Basic Tools
       yum:
-        name: ['yum-utils', 'device-mapper-persistent-data', 'lvm2','git']
+        name: ['yum-utils', 'device-mapper-persistent-data', 'lvm2', 'epel-release', 'git']
         state: latest
         update_cache: yes
 
@@ -28,13 +28,13 @@
 
     - name: Add Docker Repo
       get_url:
-        url: https://download.docker.com/linux/fedora/docker-ce.repo
+        url: https://download.docker.com/linux/centos/docker-ce.repo
         dest: /etc/yum.repos.d/
 
     - name: Install Docker CE
       yum:
-        name: docker-ce
-        state: latest
+        name: docker-ce-18.06.1.ce
+        state: present
 
     - name: Enable and Start Docker Service
       systemd:
@@ -45,26 +45,6 @@
     - name: Insert user vagrant in docker group
       become: true
       shell: "usermod -aG docker vagrant"
-
-    - name: Stop and disable firewalld
-      systemd:
-        name: firewalld
-        state: stopped
-        enabled: no
-
-    - name: Remove swap create unit
-      ansible.builtin.file:
-        path: /usr/lib/systemd/system/swap-create@.service
-        state: absent
-
-    - name: Remove swap target unit
-      ansible.builtin.file:
-        path: /usr/lib/systemd/system/swap.target
-        state: absent
-
-    - name: Just force systemd to re-execute itself (2.8 and above)
-      ansible.builtin.systemd:
-        daemon_reexec: yes
 
     - name: Disable Swap
       shell: "swapoff -a"
@@ -111,7 +91,6 @@
         name: kubelet
         state: started
         enabled: yes
-
     - name: Set Net Bridge Parameters IPv6
       sysctl:
         name: net.bridge.bridge-nf-call-ip6tables
