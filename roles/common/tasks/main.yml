@@ -52,14 +52,9 @@
         state: stopped
         enabled: no
 
-    - name: Remove swap create unit
-      ansible.builtin.file:
-        path: /usr/lib/systemd/system/swap-create@.service
-        state: absent
-
-    - name: Remove swap target unit
-      ansible.builtin.file:
-        path: /usr/lib/systemd/system/swap.target
+     - name: Unistall zram generator
+      yum:
+        name: zram-generator-defaults
         state: absent
 
     - name: Just force systemd to re-execute itself (2.8 and above)
@@ -101,6 +96,9 @@
         name: kubelet
         state: present
 
+    # If you need to configure the ip addresses for the nodes
+    # uncomment this section and insert your ip address here
+    # or use an associated variable
     # - name: Configure node ip
     #   lineinfile:
     #     path: //etc/sysconfig/kubelet
@@ -117,6 +115,7 @@
         name: net.bridge.bridge-nf-call-ip6tables
         value: 1
         sysctl_file: /etc/sysctl.d/k8s.conf
+        
     - name: Set Net Bridge Parameters IPv4
       sysctl:
         name: net.bridge.bridge-nf-call-iptables
