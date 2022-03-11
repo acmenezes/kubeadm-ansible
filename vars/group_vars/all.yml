@@ -1,7 +1,0 @@
----
-KUBE_VERSION:
-CNI_PLUGIN: [calico, weave, cilium, contiv-vpp, contrail-vpp, flannel]
-MULTIPLE_INTERFACES: true/false
-RUN_TIME: [containerd, docker, rkt, crio, etc.]
-PERSISTENT_STORAGE: [Gluster, Ceph, other data technologies]
-

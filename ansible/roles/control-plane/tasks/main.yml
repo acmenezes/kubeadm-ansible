@@ -1,0 +1,35 @@
+---
+# Using custom CIDR for pods to prevent conflict with Vagrant default CIDR
+# that avoids overlapping with host network
+- name: Running Kubeadm Init on Master
+  shell: kubeadm init --pod-network-cidr=172.16.0.0/16
+  register: kubeadm_output
+
+- name: Recording kubeadm_output to file
+  copy:
+    content: "{{kubeadm_output.stdout}}"
+    dest: /home/vagrant/kubeadm_output
+
+- name: Fetch kubeadm output
+  fetch:
+    src: /home/vagrant/kubeadm_output
+    dest: ./kubeadm_output
+    flat: yes
+
+- name: Create kube dir on vagrant home
+  file: path="/home/vagrant/.kube" state=directory
+
+- name: Setting Up Kubectl
+  copy:
+    src: /etc/kubernetes/admin.conf
+    remote_src: yes
+    dest: /home/vagrant/.kube/config
+    owner: vagrant
+    group: vagrant
+
+- name: Fetch kubectl config on hypervisor machine
+  fetch:
+    src: /etc/kubernetes/admin.conf
+    dest: admin.conf
+    flat: yes
+  

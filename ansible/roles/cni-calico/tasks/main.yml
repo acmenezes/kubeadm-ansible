@@ -1,0 +1,31 @@
+---
+# tasks file for calico
+
+- name: Create Calico DIR
+  file:
+    dest: calico
+    state: directory
+
+- name: Download calico manifest
+  get_url:
+    url: https://projectcalico.docs.tigera.io/manifests/calico.yaml
+    dest: calico/calico.yaml
+    mode: 0444
+
+- name: Uncomment CIDR parameter
+  lineinfile: 
+    path: calico/calico.yaml  
+    regexp: '^            # - name: CALICO_IPV4POOL_CIDR$' 
+    line: '            - name: CALICO_IPV4POOL_CIDR'
+    backrefs: yes
+
+- name: replace CIDR value
+  lineinfile: 
+    path: calico/calico.yaml 
+    regexp: '^            #   value: "192.168.0.0/16"$' 
+    line: '              value: "172.16.0.0/16"'
+    backrefs: yes
+
+- name: Apply calico manifest to cluster
+  shell: kubectl apply -f calico/calico.yaml
+  become_user: vagrant
