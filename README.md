@@ -1,18 +1,39 @@
-# Kubernetes Advanced Lab Configurations via Ansible and Kubeadm
+# A Simple Multi-Node Kubernetes Lab Installer
 ---
-The main goal for this project is to have a handy tool to quickly spin up a local kubernetes environment with custom configurations that are not possible with minikube. When at least more than two nodes are needed or to test high availability features when we have multiple nodes.
+Here you can find a very simple and quick recipe to spin up a local multi-node kubernetes lab environment.
 
-So different CNI plugins, storage plugins or special projects such as multus, kubevirt and others can be installed according to the variables input on the main playbook.
+### Requirements (and versions tested)
 
-This way we have a single tool to launch customized kubernetes environments in order to compare network and storage solutions as well as prepare demos, workshops and meetup presentations.
+- Vagrant 2.2.19
+- vagrant-libvirt plugin 0.7.0
+- Ansible 2.9.10
 
-This is accomplished using vagrant and libvirt for virtualization as well as ansible to install everything needed on the nodes. In order to use this project it's necessary to have a linux box running libvirt/kvm. 
+### How to Use
 
-### Target audience 
+The Vagrantfile has the most important configuration options:
 
-Container solutions archictects willing to better understand the ins and outs of custom, optimized networking and storage to meet their client's needs.
+#### Memory and CPU
 
-### Prerequisites
+You can change those values accorging to your hardware capacity although kubernetes itself will have its minimal requirements.
 
-This project needs vagrant with kvm/libvirt working in a Linux box. If 
-Other than that you'll need an up to date python and ansible installation on the testing machine.
+```
+		libvirt.memory = 4096
+		libvirt.cpus = 2
+```
+
+#### Provider
+
+This script is supposed to work with KVM and libvirt. If you need a different one such as virtualbox you can set your own changing the section that starts with:
+```
+config.vm.provider "libvirt" do |libvirt|
+```
+
+#### Number of Worker Nodes
+
+You can change the number of worker nodes by changing the variable N. Remember that total memory used is the configured memory above times N plus 1 which accounts for the master node. In the default configuration it will take up to 12GB of memory (2X4GB worker nodes + 1x4GB master node).
+```
+	N = 2
+	(1..N).each do |node_number|
+```
+#### NOTE:
+> :warning: This script disables SELinux and Firewalld to simplify development tasks.

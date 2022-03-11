@@ -1,0 +1,7 @@
+- hosts: worker_nodes
+  gather_facts: false
+  become: true
+
+  roles:
+    - system-requirements
+    - worker-node

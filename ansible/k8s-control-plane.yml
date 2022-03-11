@@ -1,0 +1,8 @@
+- hosts: master_nodes
+  gather_facts: false
+  become: true
+
+  roles:
+    - system-requirements
+    - control-plane
+    - cni-calico
